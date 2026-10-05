@@ -22,6 +22,74 @@ namespace FinCore.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("FinCore.Api.Models.AgentExecutionLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AgentDelegationsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AgentName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<double>("CompositeRiskScore")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long>("ExecutionLatencyMs")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FinalDecision")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PlanJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ToolCallsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ValidationOutputsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkflowId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("WorkflowObjective")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AgentExecutionLogs");
+                });
+
             modelBuilder.Entity("FinCore.Api.Models.ApprovalDecision", b =>
                 {
                     b.Property<Guid>("Id")
@@ -35,7 +103,7 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DecidedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Decision")
                         .IsRequired()
@@ -74,7 +142,7 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -101,7 +169,7 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastLoginAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -124,7 +192,7 @@ namespace FinCore.Api.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Reasons")
                         .IsRequired()
@@ -153,6 +221,10 @@ namespace FinCore.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ChannelDetails")
                         .IsRequired()
                         .HasColumnType("text");
@@ -160,6 +232,9 @@ namespace FinCore.Api.Migrations
                     b.Property<string>("DeliveryStatus")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("LatencyMs")
                         .HasColumnType("integer");
@@ -177,7 +252,11 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -204,10 +283,16 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Device")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("EscalatedByAnalystId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EscalationReason")
                         .HasColumnType("text");
 
                     b.Property<string>("FlagReasonsJson")
@@ -262,11 +347,51 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
                     b.ToTable("ReviewQueues");
+                });
+
+            modelBuilder.Entity("FinCore.Api.Models.RuleAuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PreviousValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RuleId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("RuleName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RuleAuditLogs");
                 });
 
             modelBuilder.Entity("FinCore.Api.Models.RuleThreshold", b =>
@@ -281,7 +406,7 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("RuleName")
                         .IsRequired()
@@ -324,7 +449,7 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -337,12 +462,61 @@ namespace FinCore.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("AgreedToTerms")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("BankAccountNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BankRoutingCode")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("BiometricEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("CardLastFour")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Department")
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("EmployeeId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdDocumentUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("text");
+
+                    b.Property<string>("KycStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("MarketingOptIn")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -352,12 +526,31 @@ namespace FinCore.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PinHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PostalCode")
+                        .HasColumnType("text");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("SelfieUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tier")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -376,11 +569,14 @@ namespace FinCore.Api.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("UserGuid")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
